@@ -1,2 +1,7 @@
-# CropShield_AI
-CropShield is a collaborative project developed to provide a simple and user-friendly solution for farmers, focusing on accessibility and ease of use.
+# CropShield 🌱
+
+CropShield is a collaborative web development project designed to make agricultural information and tools more accessible to farmers.
+
+## 👥 Contributors
+- **Amit Kumar Prasad**
+- **Akshata Sharma**
