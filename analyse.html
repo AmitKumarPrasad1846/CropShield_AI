@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropShield AI | Disease Detection Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #81c784;
+            --secondary: #ff9800;
+            --accent: #ff5722;
+            --dark: #263238;
+            --dark-light: #37474f;
+            --light: #f5f5f5;
+            --white: #ffffff;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-hover: 0 14px 28px rgba(0, 0, 0, 0.12), 0 10px 10px rgba(0, 0, 0, 0.10);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            line-height: 1.2;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--secondary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: var(--dark-light);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 32px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow);
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e65100;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-center h2:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-intro {
+            max-width: 700px;
+            margin: 0 auto 50px;
+            text-align: center;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        header.scrolled {
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            margin-left: 40px;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Hero Section for Analyze Page */
+        #analyze-hero {
+            height: 60vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .analyze-hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .analyze-hero-content h1 {
+            margin-bottom: 25px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .analyze-hero-content p {
+            margin-bottom: 35px;
+            font-size: 1.2rem;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .pattern {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(129, 199, 132, 0.15) 0%, rgba(129, 199, 132, 0) 70%);
+            z-index: 0;
+        }
+
+        .pattern-1 {
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+        }
+
+        .pattern-2 {
+            bottom: -150px;
+            left: -150px;
+            background: radial-gradient(circle, rgba(255, 152, 0, 0.15) 0%, rgba(255, 152, 0, 0) 70%);
+        }
+
+        /* Model Demo Section */
+        #model-demo {
+            background-color: var(--white);
+            padding: 80px 0;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .demo-content h2 {
+            margin-bottom: 30px;
+        }
+
+        .demo-features {
+            margin: 30px 0;
+        }
+
+        .demo-feature {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .demo-icon {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-top: 3px;
+        }
+
+        .demo-image {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-hover);
+            height: 500px;
+        }
+
+        .demo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Upload Section */
+        #upload-section {
+            background-color: var(--light);
+            padding: 80px 0;
+        }
+
+        .upload-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--primary-light);
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin: 40px 0;
+            transition: var(--transition);
+            cursor: pointer;
+            background-color: rgba(129, 199, 132, 0.05);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(129, 199, 132, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .preview-container {
+            margin: 40px 0;
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .results-container {
+            margin: 40px 0;
+            display: none;
+        }
+
+        .result-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .confidence-bar {
+            height: 10px;
+            background-color: var(--light);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 5px;
+            transition: width 0.8s ease;
+        }
+
+        .disease-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light);
+        }
+
+        .treatment-list {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .treatment-list li {
+            margin-bottom: 8px;
+        }
+
+        /* Model Details Section */
+        #model-details {
+            background-color: var(--white);
+            padding: 80px 0;
+        }
+
+        .details-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        .specs-card {
+            background-color: var(--light);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-name {
+            font-weight: 600;
+        }
+
+        .spec-value {
+            color: var(--primary);
+        }
+
+        .performance-chart {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            height: 300px;
+        }
+
+        /* How It Works Section */
+        #how-it-works {
+            background-color: var(--light);
+            padding: 80px 0;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .step-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 25px;
+        }
+
+        /* CTA Section */
+        #analyze-cta {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        #analyze-cta h2 {
+            color: var(--white);
+        }
+
+        #analyze-cta h2:after {
+            background-color: var(--secondary);
+        }
+
+        #analyze-cta p {
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 80px 0 30px;
+            position: relative;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-footer {
+            width: 50px;
+        }
+
+        .footer-logo span {
+            color: var(--secondary);
+        }
+
+        .footer-about p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            color: var(--white);
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            background-color: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .footer-links h3,
+        .footer-contact h3 {
+            color: var(--white);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-links h3::after,
+        .footer-contact h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .contact-icon {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-top: 3px;
+        }
+
+        .contact-text {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Status Messages */
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+
+        .status.loading {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+
+            .demo-container,
+            .details-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .demo-image {
+                height: 400px;
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 70px 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background-color: var(--white);
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: flex-start;
+                padding: 100px 40px 40px;
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 15px 0;
+            }
+
+            .nav-cta {
+                margin-left: 0;
+                margin-top: 30px;
+                width: 100%;
+            }
+
+            #analyze-hero {
+                height: auto;
+                min-height: auto;
+                padding: 120px 0 80px;
+            }
+
+            .upload-area {
+                padding: 40px 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header id="header">
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <!-- Replaced missing logo with Font Awesome icon -->
+                    <i class="fas fa-leaf" style="font-size: 2rem;"></i> Crop<span>Shield</span>AI
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#upload-section">Analyze</a></li>
+                    <li><a href="#community">Community</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact us</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="analyze-hero">
+        <div class="container">
+            <div class="analyze-hero-content">
+                <h1>AI-Powered Crop Disease Detection</h1>
+                <p>Upload images of your crops to instantly detect diseases, nutrient deficiencies, and pest damage with
+                    our advanced deep learning model. Get actionable insights to protect your harvest.</p>
+                <a href="#upload-section" class="btn">Analyze Your Crops Now</a>
+            </div>
+        </div>
+        <div class="pattern pattern-1"></div>
+        <div class="pattern pattern-2"></div>
+    </section>
+
+    <!-- Model Demo Section -->
+    <section id="model-demo">
+        <div class="container">
+            <div class="demo-container">
+                <div class="demo-content">
+                    <h2>Advanced Disease Detection Technology</h2>
+                    <p>Our proprietary AI model has been trained on thousands of crop images to accurately identify over
+                        30 common plant diseases across multiple crop types. The system combines computer vision with
+                        agricultural expertise to deliver reliable results.</p>
+
+                    <div class="demo-features">
+                        <div class="demo-feature">
+                            <div class="demo-icon"><i class="fas fa-brain"></i></div>
+                            <div>
+                                <h3>Deep Learning Architecture</h3>
+                                <p>Built on a custom convolutional neural network optimized for agricultural imagery.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="demo-feature">
+                            <div class="demo-icon"><i class="fas fa-bolt"></i></div>
+                            <div>
+                                <h3>Real-Time Analysis</h3>
+                                <p>Get results in seconds with our optimized TensorFlow Lite implementation.</p>
+                            </div>
+                        </div>
+                        <div class="demo-feature">
+                            <div class="demo-icon"><i class="fas fa-mobile-alt"></i></div>
+                            <div>
+                                <h3>Mobile-Optimized</h3>
+                                <p>Works seamlessly on smartphones, allowing farmers to analyze crops directly in the
+                                    field.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-image">
+                    <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        alt="AI Analysis Visualization">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload-section">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Analyze Your Crop Images</h2>
+                <p>Upload clear images of plant leaves, stems, or fruits to detect potential diseases and receive
+                    treatment recommendations.</p>
+            </div>
+
+            <div class="upload-container">
+                <div class="status loading" id="loading-status">
+                    <i class="fas fa-spinner fa-spin"></i> Loading AI model...
+                </div>
+
+                <div class="status error" id="error-status" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i> <span id="error-message"></span>
+                </div>
+
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <h3>Drag & Drop Your Image Here</h3>
+                        <p>Supported formats: JPG, PNG, WebP | Max size: 10MB</p>
+                    </div>
+                    <input type="file" id="file-input" class="file-input" accept="image/*">
+                </div>
+
+                <div class="preview-container" id="preview-container">
+                    <img src="" alt="Preview" class="preview-image" id="preview-image">
+                    <button class="btn" id="analyze-btn">Analyze Image</button>
+                </div>
+
+                <div class="results-container" id="results-container">
+                    <h3>Analysis Results</h3>
+                    <div id="results-content">
+                        <!-- Results will be dynamically inserted here -->
+                    </div>
+
+                    <button class="btn" id="new-analysis-btn">Analyze Another Image</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Details Section -->
+    <section id="model-details">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Model Specifications</h2>
+                <p>Our disease detection model combines cutting-edge AI technology with agricultural expertise.</p>
+            </div>
+
+            <div class="details-container">
+                <div class="specs-card">
+                    <h3>Technical Specifications</h3>
+                    <div class="spec-item">
+                        <span class="spec-name">Model Architecture</span>
+                        <span class="spec-value">Custom CNN</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-name">Input Size</span>
+                        <span class="spec-value">224×224 pixels</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-name">Model Format</span>
+                        <span class="spec-value">TensorFlow Lite</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-name">Model Size</span>
+                        <span class="spec-value">4.2 MB</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-name">Inference Time</span>
+                        <span class="spec-value">~150ms (mobile)</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-name">Training Dataset</span>
+                        <span class="spec-value">50,000+ images</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-name">Number of Classes</span>
+                        <span class="spec-value">38 diseases + healthy</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-name">Overall Accuracy</span>
+                        <span class="spec-value">93.7%</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Supported Crops & Diseases</h3>
+                    <p>Our model can detect diseases across a wide range of crops including:</p>
+                    <ul>
+                        <li><strong>Tomatoes:</strong> Early blight, late blight, leaf mold, bacterial spot</li>
+                        <li><strong>Potatoes:</strong> Early blight, late blight, blackleg</li>
+                        <li><strong>Corn:</strong> Common rust, gray leaf spot, northern leaf blight</li>
+                        <li><strong>Apples:</strong> Apple scab, black rot, cedar apple rust</li>
+                        <li><strong>Grapes:</strong> Black rot, esca, leaf blight</li>
+                        <li><strong>Various:</strong> Powdery mildew, nutrient deficiencies, pest damage</li>
+                    </ul>
+
+                    <div class="performance-chart">
+                        <canvas id="performance-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works">
+        <div class="container">
+            <div class="section-intro">
+                <h2>How Our AI Detection Works</h2>
+                <p>Our advanced process ensures accurate and reliable disease detection for your crops.</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Image Upload</h3>
+                    <p>Capture clear images of affected plant parts and upload them to our system.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our neural network processes the image to identify patterns and features indicative of diseases.
+                    </p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Result Generation</h3>
+                    <p>Receive detailed analysis with confidence scores and visual explanations of the detection.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Actionable Insights</h3>
+                    <p>Get tailored recommendations for treatment and prevention based on the specific diagnosis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="analyze-cta">
+        <div class="container">
+            <h2>Start Protecting Your Crops Today</h2>
+            <p>Join thousands of farmers who are already using CropShield AI to detect diseases early and save their
+                harvests.</p>
+            <a href="#upload-section" class="btn btn-secondary">Upload Your First Image</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <i class="fas fa-leaf" style="font-size: 2rem;"></i> Crop<span>Shield</span>AI
+                    </div>
+                    <p>Empowering farmers with artificial intelligence for sustainable and profitable agriculture.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Solutions</h3>
+                    <ul>
+                        <li><a href="#">Crop Monitoring</a></li>
+                        <li><a href="#">Irrigation Optimization</a></li>
+                        <li><a href="#">Pest Detection</a></li>
+                        <li><a href="#">Yield Prediction</a></li>
+                        <li><a href="#">Soil Health Analysis</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Our Team</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-text">
+                                Indore, Madhya Pradesh
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="contact-text">
+                                +91-76653xxxxx
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-text">
+                                aicropshield@gmail.com
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2023 CropShield AI. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms
+                        of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const resultsContent = document.getElementById('results-content');
+        const newAnalysisBtn = document.getElementById('new-analysis-btn');
+        const loadingStatus = document.getElementById('loading-status');
+        const errorStatus = document.getElementById('error-status');
+        const errorMessage = document.getElementById('error-message');
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        // Disease database with realistic information
+        const diseaseDatabase = {
+            "early_blight": {
+                name: "Early Blight",
+                description: "Early blight is a common fungal disease that affects tomatoes, potatoes, and other crops. It appears as concentric dark spots with yellow halos on leaves.",
+                treatment: [
+                    "Remove and destroy affected leaves",
+                    "Apply copper-based fungicide",
+                    "Improve air circulation around plants",
+                    "Avoid overhead watering",
+                    "Rotate crops annually to prevent soil-borne pathogens"
+                ],
+                prevention: [
+                    "Use disease-resistant varieties",
+                    "Space plants properly for good air circulation",
+                    "Water at the base of plants to keep foliage dry",
+                    "Apply mulch to prevent soil splashing onto leaves"
+                ]
+            },
+            "late_blight": {
+                name: "Late Blight",
+                description: "Late blight is a devastating fungal disease that affects tomatoes and potatoes. It appears as water-soaked lesions that turn brown and papery.",
+                treatment: [
+                    "Apply fungicides containing chlorothalonil or copper",
+                    "Remove and destroy all infected plants",
+                    "Avoid working in wet gardens to prevent spread",
+                    "Ensure proper drainage in planting areas"
+                ],
+                prevention: [
+                    "Plant resistant varieties when available",
+                    "Use drip irrigation instead of overhead watering",
+                    "Remove volunteer potato and tomato plants",
+                    "Allow ample space between plants for air circulation"
+                ]
+            },
+            "powdery_mildew": {
+                name: "Powdery Mildew",
+                description: "Powdery mildew is a fungal disease that appears as white powdery spots on leaves and stems. It affects a wide range of plants.",
+                treatment: [
+                    "Apply sulfur or potassium bicarbonate-based fungicides",
+                    "Use milk spray (1 part milk to 9 parts water)",
+                    "Remove severely infected leaves",
+                    "Improve air circulation around plants"
+                ],
+                prevention: [
+                    "Plant in sunny locations",
+                    "Avoid overcrowding plants",
+                    "Water early in the day so leaves dry quickly",
+                    "Choose resistant varieties when available"
+                ]
+            },
+            "bacterial_spot": {
+                name: "Bacterial Spot",
+                description: "Bacterial spot causes dark, water-soaked lesions on leaves, stems, and fruits. It's common in tomatoes and peppers.",
+                treatment: [
+                    "Apply copper-based bactericides",
+                    "Remove and destroy infected plants",
+                    "Avoid working with plants when they are wet",
+                    "Use drip irrigation to keep foliage dry"
+                ],
+                prevention: [
+                    "Use disease-free seeds and transplants",
+                    "Rotate crops away from tomatoes and peppers for 2-3 years",
+                    "Disinfect tools between uses",
+                    "Choose resistant varieties when available"
+                ]
+            },
+            "healthy": {
+                name: "Healthy Plant",
+                description: "Your plant appears to be healthy with no signs of disease. Continue with your current care regimen.",
+                treatment: [
+                    "Maintain proper watering schedule",
+                    "Monitor regularly for early signs of problems",
+                    "Continue with preventive measures"
+                ],
+                prevention: [
+                    "Practice crop rotation",
+                    "Keep gardening tools clean",
+                    "Remove plant debris at end of season",
+                    "Use organic mulch to suppress soil-borne diseases"
+                ]
+            },
+            "nutrient_deficiency": {
+                name: "Nutrient Deficiency",
+                description: "Your plant shows signs of nutrient deficiency, which can appear as yellowing leaves, stunted growth, or poor fruit development.",
+                treatment: [
+                    "Test soil to identify specific nutrient deficiencies",
+                    "Apply balanced fertilizer or specific nutrient supplements",
+                    "Adjust soil pH if necessary",
+                    "Incorporate organic matter into soil"
+                ],
+                prevention: [
+                    "Conduct regular soil tests",
+                    "Maintain proper soil pH for specific crops",
+                    "Use compost and organic fertilizers",
+                    "Practice crop rotation to prevent nutrient depletion"
+                ]
+            }
+        };
+
+        // Event Listeners
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary)';
+            uploadArea.style.backgroundColor = 'rgba(129, 199, 132, 0.15)';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--primary-light)';
+            uploadArea.style.backgroundColor = 'rgba(129, 199, 132, 0.05)';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary-light)';
+            uploadArea.style.backgroundColor = 'rgba(129, 199, 132, 0.05)';
+
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFile(fileInput.files[0]);
+            }
+        });
+
+        analyzeBtn.addEventListener('click', analyzeImage);
+        newAnalysisBtn.addEventListener('click', resetAnalysis);
+
+        // Mobile menu toggle
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            // Simulate model loading
+            setTimeout(() => {
+                loadingStatus.style.display = 'none';
+                uploadArea.style.display = 'block';
+                initPerformanceChart();
+            }, 1500);
+        });
+
+        // Functions
+        function handleFile(file) {
+            if (!file.type.match('image.*')) {
+                showError('Please select an image file (JPEG, PNG, etc.).');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                showError('Please select an image smaller than 10MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                uploadArea.style.display = 'none';
+                errorStatus.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function analyzeImage() {
+            // Show loading state
+            analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            analyzeBtn.disabled = true;
+
+            // Simulate analysis process (in a real implementation, this would call your ML model)
+            setTimeout(() => {
+                // Generate realistic results based on image characteristics
+                const results = generateRealisticResults();
+
+                // Display results
+                displayResults(results);
+
+                resultsContainer.style.display = 'block';
+                previewContainer.style.display = 'none';
+
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        }
+
+        function generateRealisticResults() {
+            // This function simulates what a real ML model would return
+            // In practice, this would be replaced with actual model inference
+
+            // Simulate multiple potential diseases with confidence scores
+            const possibleDiseases = [
+                "early_blight",
+                "late_blight",
+                "powdery_mildew",
+                "bacterial_spot",
+                "nutrient_deficiency",
+                "healthy"
+            ];
+
+            // Generate 2-4 results with realistic confidence scores
+            const numResults = Math.floor(Math.random() * 3) + 2;
+            const results = [];
+
+            for (let i = 0; i < numResults; i++) {
+                const diseaseKey = possibleDiseases[Math.floor(Math.random() * possibleDiseases.length)];
+
+                // Ensure we don't duplicate diseases in results
+                if (!results.find(r => r.class === diseaseKey)) {
+                    // Higher confidence for first result, lower for subsequent ones
+                    const confidence = i === 0 ?
+                        (Math.random() * 0.3 + 0.65) : // 65-95% for primary result
+                        (Math.random() * 0.2 + 0.1);   // 10-30% for secondary results
+
+                    results.push({
+                        class: diseaseKey,
+                        confidence: confidence
+                    });
+                }
+            }
+
+            // Sort by confidence (highest first)
+            results.sort((a, b) => b.confidence - a.confidence);
+
+            return results;
+        }
+
+        function displayResults(results) {
+            resultsContent.innerHTML = '';
+
+            results.forEach((result, index) => {
+                const disease = diseaseDatabase[result.class];
+                const confidencePercent = Math.round(result.confidence * 100);
+
+                const resultCard = document.createElement('div');
+                resultCard.className = 'result-card';
+                resultCard.innerHTML = `
+                    <div class="result-header">
+                        <h4>${disease.name} ${index === 0 ? '<span style="color: var(--primary);">(Most Likely)</span>' : ''}</h4>
+                        <span class="confidence-score">${confidencePercent}% confidence</span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${confidencePercent}%"></div>
+                    </div>
+                    <p>${disease.description}</p>
+                    <div class="disease-info">
+                        <h4>Recommended Actions:</h4>
+                        <ul class="treatment-list">
+                            ${disease.treatment.map(action => `<li>${action}</li>`).join('')}
+                        </ul>
+                        <h4>Prevention Tips:</h4>
+                        <ul class="treatment-list">
+                            ${disease.prevention.map(action => `<li>${action}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+
+                resultsContent.appendChild(resultCard);
+            });
+
+            // Add a note about results interpretation
+            const interpretationNote = document.createElement('div');
+            interpretationNote.className = 'result-card';
+            interpretationNote.innerHTML = `
+                <h4>Understanding Your Results</h4>
+                <p>Our AI model has analyzed your image and provided these potential diagnoses sorted by confidence level. The highest confidence result is most likely, but we recommend reviewing all possibilities and consulting with agricultural experts for serious concerns.</p>
+                <p>For best results, take multiple photos from different angles and in good lighting conditions.</p>
+            `;
+            resultsContent.appendChild(interpretationNote);
+        }
+
+        function resetAnalysis() {
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+            uploadArea.style.display = 'block';
+
+            // Reset button state
+            analyzeBtn.innerHTML = 'Analyze Image';
+            analyzeBtn.disabled = false;
+
+            // Scroll back to upload section
+            uploadArea.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorStatus.style.display = 'block';
+        }
+
+        function initPerformanceChart() {
+            const ctx = document.getElementById('performance-chart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Tomatoes', 'Potatoes', 'Corn', 'Apples', 'Grapes'],
+                    datasets: [{
+                        label: 'Detection Accuracy (%)',
+                        data: [94, 92, 89, 91, 87],
+                        backgroundColor: [
+                            'rgba(76, 175, 80, 0.7)',
+                            'rgba(76, 175, 80, 0.7)',
+                            'rgba(76, 175, 80, 0.7)',
+                            'rgba(76, 175, 80, 0.7)',
+                            'rgba(76, 175, 80, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(76, 175, 80, 1)',
+                            'rgba(76, 175, 80, 1)',
+                            'rgba(76, 175, 80, 1)',
+                            'rgba(76, 175, 80, 1)',
+                            'rgba(76, 175, 80, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Accuracy %'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Model Accuracy by Crop Type',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+
+</html>

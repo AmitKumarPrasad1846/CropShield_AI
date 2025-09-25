@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | 404 Error</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #4a6cf7;
+            line-height: 1;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #718096;
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            padding: 15px 25px;
+            background-color: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: #3451b2;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4a6cf7;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #3451b2;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #4a6cf7;
+            color: #4a6cf7;
+        }
+
+        .btn-outline:hover {
+            background-color: #4a6cf7;
+            color: white;
+        }
+
+        .illustration {
+            max-width: 300px;
+            margin: 0 auto 30px;
+        }
+
+        .illustration svg {
+            width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 80px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="illustration">
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="75" r="60" fill="#4a6cf7" opacity="0.2" />
+                <circle cx="80" cy="55" r="10" fill="#4a6cf7" />
+                <circle cx="120" cy="55" r="10" fill="#4a6cf7" />
+                <path d="M60 105 Q100 130 140 105" stroke="#4a6cf7" stroke-width="5" fill="none" />
+                <path d="M50 30 L70 50" stroke="#4a6cf7" stroke-width="5" />
+                <path d="M150 30 L130 50" stroke="#4a6cf7" stroke-width="5" />
+            </svg>
+        </div>
+
+        <div class="error-code">404</div>
+
+        <h1>Oops! Page Not Found</h1>
+
+        <p>The page you're looking for seems to have wandered off into the digital void. It might have been moved,
+            deleted, or perhaps never existed.</p>
+
+        <div class="search-box">
+            <input type="text" placeholder="What are you looking for?">
+            <button>Search</button>
+        </div>
+
+        <div class="actions">
+            <a href="index.html" class="btn">Go to Homepage</a>
+            <a href="#" class="btn btn-outline">Contact Support</a>
+        </div>
+    </div>
+
+    <script>
+        // Simple search functionality
+        document.querySelector('.search-box button').addEventListener('click', function () {
+            const searchQuery = document.querySelector('.search-box input').value;
+            if (searchQuery.trim() !== '') {
+                window.location.href = '/search?q=' + encodeURIComponent(searchQuery);
+            }
+        });
+
+        document.querySelector('.search-box input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-box button').click();
+            }
+        });
+    </script>
+</body>
+
+</html>

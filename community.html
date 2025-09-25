@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropShield AI | Community Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --primary-light: #81c784;
+            --secondary: #ff9800;
+            --accent: #ff5722;
+            --dark: #263238;
+            --dark-light: #37474f;
+            --light: #f5f5f5;
+            --white: #ffffff;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-hover: 0 14px 28px rgba(0, 0, 0, 0.12), 0 10px 10px rgba(0, 0, 0, 0.10);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            line-height: 1.2;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--secondary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: var(--dark-light);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 32px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow);
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e65100;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-center h2:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-intro {
+            max-width: 700px;
+            margin: 0 auto 50px;
+            text-align: center;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 0;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        header.scrolled {
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            margin-left: 40px;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--dark);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Community Hero Section */
+        .community-hero {
+            padding-top: 150px;
+            padding-bottom: 80px;
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        /* Community Features */
+        .community-features {
+            background-color: var(--white);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(46, 125, 50, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        /* Chat Container */
+        .chat-section {
+            background-color: var(--light);
+            padding: 80px 0;
+        }
+
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-hover);
+        }
+
+        @media (max-width: 992px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar {
+            background: var(--primary-light);
+            padding: 30px;
+            color: var(--primary-dark);
+        }
+
+        .user-profile {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-form h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .profile-form input,
+        .profile-form select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .profile-form input:focus,
+        .profile-form select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .online-users {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .online-users h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-dark);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--dark-light);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .status-online {
+            background-color: #4CAF50;
+        }
+
+        .status-offline {
+            background-color: #f44336;
+        }
+
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: var(--primary-light);
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.other {
+            background: #e5e5ea;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.system {
+            background: #fff4e5;
+            margin: 0 auto;
+            text-align: center;
+            border-radius: 8px;
+            max-width: 90%;
+        }
+
+        .message-sender {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sender-role {
+            font-size: 0.7rem;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .message-text {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            text-align: right;
+            color: #777;
+        }
+
+        .typing-indicator {
+            height: 20px;
+            padding: 0 25px;
+            font-style: italic;
+            color: var(--dark-light);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .typing-dots {
+            display: inline-flex;
+            margin-left: 8px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--dark-light);
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background: var(--white);
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .chat-input input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .chat-input button {
+            margin-left: 15px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .chat-input button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .community-guidelines {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .community-guidelines h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .community-guidelines h3 i {
+            color: var(--secondary);
+        }
+
+        .community-guidelines ul {
+            list-style: none;
+        }
+
+        .community-guidelines li {
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+            color: var(--dark-light);
+        }
+
+        .community-guidelines li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background-color: var(--white);
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: flex-start;
+                padding: 100px 40px 40px;
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .community-hero {
+                padding-top: 120px;
+                padding-bottom: 60px;
+            }
+
+            .chat-container {
+                border-radius: 0;
+            }
+
+            .sidebar {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header id="header">
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="assets/images/logo.png" alt="CropShield AI Logo">Crop<span>Shield</span>AI
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="analyze.html">Analyze</a></li>
+                    <li><a href="community.html" class="active">Community</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact us</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Community Hero Section -->
+    <section class="community-hero">
+        <div class="container">
+            <div class="section-intro">
+                <h1>Community Hub</h1>
+                <p>Connect with farmers worldwide, share experiences, and get real-time advice from agricultural
+                    experts.</p>
+                <a href="#community-chat" class="btn">Join Conversation</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Chat Section -->
+    <section id="community-chat" class="chat-section">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Real-Time Community Chat</h2>
+                <p>Join the conversation with farmers, agronomists, and agricultural experts from around the world.</p>
+            </div>
+
+            <div class="chat-container">
+                <div class="sidebar">
+                    <div class="user-profile">
+                        <div class="profile-form">
+                            <h3>Join the Community</h3>
+                            <input type="text" id="username" placeholder="Your Name" maxlength="20">
+                            <select id="userRole">
+                                <option value="Farmer">Farmer</option>
+                                <option value="Agronomist">Agronomist</option>
+                                <option value="Researcher">Researcher</option>
+                                <option value="Student">Student</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <select id="userCrop">
+                                <option value="Wheat">Wheat</option>
+                                <option value="Rice">Rice</option>
+                                <option value="Corn">Corn</option>
+                                <option value="Vegetables">Vegetables</option>
+                                <option value="Fruits">Fruits</option>
+                                <option value="Other">Other Crops</option>
+                            </select>
+                            <button id="joinBtn" class="btn">Join Chat</button>
+                        </div>
+                    </div>
+
+                    <div class="online-users">
+                        <h3>Online Farmers <span id="usersCount">(0)</span></h3>
+                        <div id="usersList">
+                            <!-- Users will be added here dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-main">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message system">
+                            <div class="message-text">Welcome to CropShield AI Community! Connect with farmers worldwide
+                                in real-time.</div>
+                            <div class="message-time" id="currentTime"></div>
+                        </div>
+                    </div>
+
+                    <div class="typing-indicator" id="typingIndicator"></div>
+
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" placeholder="Type your message here..." disabled>
+                        <button id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-guidelines">
+                <h3><i class="fas fa-info-circle"></i> Community Guidelines</h3>
+                <ul>
+                    <li>Be respectful to all community members</li>
+                    <li>Share your farming experiences and knowledge</li>
+                    <li>No spam or promotional content</li>
+                    <li>Keep discussions relevant to agriculture</li>
+                    <li>Help create a positive and supportive environment</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set current time
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString();
+
+            // DOM elements
+            const usernameInput = document.getElementById('username');
+            const userRoleSelect = document.getElementById('userRole');
+            const userCropSelect = document.getElementById('userCrop');
+            const joinBtn = document.getElementById('joinBtn');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const chatMessages = document.getElementById('chatMessages');
+            const usersList = document.getElementById('usersList');
+            const onlineCount = document.getElementById('usersCount');
+            const typingIndicator = document.getElementById('typingIndicator');
+
+            let currentUser = null;
+            let typingTimer = null;
+
+            // Sample messages for demonstration
+            const sampleMessages = [
+                {
+                    username: "AI",
+                    role: "Assistant",
+                    message: "Hello! I'm here to help with farming questions. What would you like to discuss today?",
+                    timestamp: new Date().toLocaleTimeString(),
+                    type: "other"
+                },
+                {
+                    username: "AI",
+                    role: "Wheat expert",
+                    message: "Has anyone tried the new organic pest control method?",
+                    timestamp: new Date().toLocaleTimeString(),
+                    type: "other"
+                },
+                {
+                    username: "",
+                    role: "Expert Vegetable",
+                    message: "Yes, I've been using it for 2 months with great results!",
+                    timestamp: new Date().toLocaleTimeString(),
+                    type: "other"
+                }
+            ];
+
+            // Load sample messages
+            sampleMessages.forEach(msg => {
+                addMessage(msg.username, msg.role, msg.message, msg.timestamp, msg.type === "user");
+            });
+
+            // Join chat functionality
+            joinBtn.addEventListener('click', joinChat);
+
+            function joinChat() {
+                const username = usernameInput.value.trim();
+                const role = userRoleSelect.value;
+                const crop = userCropSelect.value;
+
+                if (username) {
+                    currentUser = {
+                        username: username,
+                        role: role,
+                        crop: crop
+                    };
+
+                    // Update UI
+                    document.querySelector('.profile-form').innerHTML = `
+                        <div class="user-info">
+                            <h3>Welcome, ${username}!</h3>
+                            <p>${role} • ${crop}</p>
+                            <button id="leaveBtn" class="btn" style="background: #f44336; margin-top: 15px;">Leave Chat</button>
+                        </div>
+                    `;
+
+                    document.getElementById('leaveBtn').addEventListener('click', leaveChat);
+
+                    // Add user to online list
+                    addUserToOnlineList(currentUser);
+
+                    // Enable messaging
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                    messageInput.focus();
+
+                    // Add join message
+                    addSystemMessage(`${username} joined the chat`, new Date().toLocaleTimeString());
+                }
+            }
+
+            function leaveChat() {
+                if (currentUser) {
+                    // Add leave message
+                    addSystemMessage(`${currentUser.username} left the chat`, new Date().toLocaleTimeString());
+
+                    // Remove user from online list
+                    const userElements = document.querySelectorAll('.user-item');
+                    userElements.forEach(userEl => {
+                        if (userEl.querySelector('.user-name').textContent === currentUser.username) {
+                            userEl.remove();
+                        }
+                    });
+
+                    // Reset UI
+                    document.querySelector('.profile-form').innerHTML = `
+                        <h3>Join the Community</h3>
+                        <input type="text" id="username" placeholder="Your Name" maxlength="20">
+                        <select id="userRole">
+                            <option value="Farmer">Farmer</option>
+                            <option value="Agronomist">Agronomist</option>
+                            <option value="Researcher">Researcher</option>
+                            <option value="Student">Student</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <select id="userCrop">
+                            <option value="Wheat">Wheat</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Corn">Corn</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Other">Other Crops</option>
+                        </select>
+                        <button id="joinBtn" class="btn">Join Chat</button>
+                    `;
+
+                    // Reattach event listeners
+                    document.getElementById('joinBtn').addEventListener('click', joinChat);
+
+                    // Disable messaging
+                    messageInput.disabled = true;
+                    sendBtn.disabled = true;
+                    messageInput.value = '';
+
+                    currentUser = null;
+                }
+            }
+
+            // Send message functionality
+            sendBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message && currentUser) {
+                    const timestamp = new Date().toLocaleTimeString();
+
+                    // Add message to UI
+                    addMessage(currentUser.username, currentUser.role, message, timestamp, true);
+
+                    // Simulate response after a delay
+                    setTimeout(() => {
+                        const responses = [
+                            "That's interesting! Can you share more details?",
+                            "I've had a similar experience with my crops.",
+                            "Thanks for sharing this information!",
+                            "Has anyone else tried this method?",
+                            "I'll definitely give this a try on my farm.",
+                            "What variety are you growing?",
+                            "How has the weather been in your region?",
+                            "Have you considered using organic alternatives?",
+                            "What's your irrigation method?"
+                        ];
+                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+                        const botTimestamp = new Date().toLocaleTimeString();
+                        addMessage("Agricultural Bot", "Assistant", randomResponse, botTimestamp, false);
+                    }, 1000 + Math.random() * 2000);
+
+                    // Clear input
+                    messageInput.value = '';
+
+                    // Clear typing indicator
+                    clearTimeout(typingTimer);
+                    typingIndicator.textContent = '';
+                }
+            }
+
+            // Typing indicator functionality
+            messageInput.addEventListener('input', function () {
+                if (currentUser) {
+                    // Show typing indicator
+                    typingIndicator.innerHTML = `${currentUser.username} is typing<span class="typing-dots"><span></span><span></span><span></span></span>`;
+
+                    // Clear previous timer
+                    clearTimeout(typingTimer);
+
+                    // Set timer to stop typing indicator after 1 second
+                    typingTimer = setTimeout(() => {
+                        typingIndicator.textContent = '';
+                    }, 1000);
+                }
+            });
+
+            // Helper functions
+
+            function addMessage(username, role, message, timestamp, isCurrentUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isCurrentUser ? 'user' : 'other'}`;
+
+                messageDiv.innerHTML = `
+                    <div class="message-sender">
+                        ${username}
+                        <span class="sender-role">${role}</span>
+                    </div>
+                    <div class="message-text">${message}</div>
+                    <div class="message-time">${timestamp}</div>
+                `;
+
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addSystemMessage(message, timestamp) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message system';
+
+                messageDiv.innerHTML = `
+                    <div class="message-text">${message}</div>
+                    <div class="message-time">${timestamp}</div>
+                `;
+
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addUserToOnlineList(user) {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+
+                userItem.innerHTML = `
+                    <div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.username}</div>
+                        <div class="user-role">${user.role} • ${user.crop}</div>
+                    </div>
+                    <span class="status-indicator status-online"></span>
+                `;
+
+                usersList.appendChild(userItem);
+
+                // Update online count
+                const userCount = usersList.children.length;
+                onlineCount.textContent = `(${userCount})`;
+            }
+
+            // Header scroll effect
+            window.addEventListener('scroll', function () {
+                const header = document.getElementById('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Hamburger menu functionality
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+
+            if (hamburger) {
+                hamburger.addEventListener('click', function () {
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
